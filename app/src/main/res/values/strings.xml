@@ -1,11 +1,16 @@
 <resources>
     <string name="app_name">AppStallman</string>
 
+    /* page login */
     <string name="app_title_login">Stallman</string>
     <string name="app_text_login">Veuillez Saisir vos identifiants et mots de passe svp !</string>
 
     <string name="app_id_login">Identifiant</string>
     <string name="app_mdp_login">Mot de passe</string>
     <string name="app_button_login">Se connecter</string>
+
+    /* page message_list */
+    <string name="app_title_message_list">Listes Messages</string>
+    <string name="app_text_message_list">Vous pouvez consulter ici la liste de vos nouveaux messages envoyés via Stallman</string>
 
 </resources>
