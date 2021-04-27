@@ -30,18 +30,32 @@ public class ApiService {
 
         String urlParameters = "";
         int i = 1;
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            urlParameters += entry.getKey()+"="+entry.getValue();
-            if (i < parameters.size()) {
-                urlParameters += "&";
+        if (method.equals("GET")) {
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                urlParameters += entry.getKey()+"="+entry.getValue();
+                if (i < parameters.size()) {
+                    urlParameters += "&";
+                }
+                i++;
             }
-            i++;
+        } else {
+            urlParameters = "{";
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                urlParameters += '"'+entry.getKey()+'"'+":"+'"'+entry.getValue()+'"';
+                if (i < parameters.size()) {
+                    urlParameters += ",";
+                } else {
+                    urlParameters += "}";
+                }
+                i++;
+            }
         }
+
 
         // Send request
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-
+        System.out.println(urlParameters);
         wr.writeBytes(urlParameters);
         wr.flush();
         wr.close();
