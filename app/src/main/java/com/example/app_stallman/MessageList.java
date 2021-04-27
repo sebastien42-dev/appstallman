@@ -2,6 +2,7 @@ package com.example.app_stallman;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -29,12 +30,21 @@ public class MessageList extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
+                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("preferences-key-name", MODE_PRIVATE);
+                    Integer userid = prefs.getInt("id_user", 0);
+                    String userName = prefs.getString("nom_user","toto");
+                    String userSurname = prefs.getString("prenom_user","tutu");
+                    Log.i("test_session_message", userid.toString()+userName+userSurname);
+
+
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     ApiService http = new ApiService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = "http://192.168.56.1/stallman2/public/api/message/list/23";
+                    String urlTest = "http://192.168.56.1/stallman2/public/api/message/list/"+userid.toString();
                     String retourJson = http.sendRequest(urlTest, "GET", mapJava);
                     System.out.println(retourJson);
+
+
 
 
                 } catch (Exception e) {

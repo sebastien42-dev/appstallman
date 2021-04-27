@@ -3,6 +3,7 @@ package com.example.app_stallman;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -55,11 +56,24 @@ public class MainActivity extends AppCompatActivity {
                             String urlTest = "http://192.168.56.1/stallman2/public/api/login";
                             String retourJson = http.sendRequest(urlTest, "POST", mapJava);
                             System.out.println(retourJson);
+
+                            JSONObject jsonUser = new JSONObject(retourJson);
+                            String name = (String)jsonUser.get("nom");
+                            String surname = (String)jsonUser.get("prenom");
+                            Integer iduser = (Integer) jsonUser.get("id");
+
+                            SharedPreferences prefs = getApplicationContext().getSharedPreferences("preferences-key-name", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit ();
+                            editor.putInt("id_user",iduser );
+                            editor.putString("prenom_user", surname);
+                            editor.putString("nom_user", name);
+                            editor.commit ();
+
                             goMessage();
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.i("test api login", "ya une merde");
+                            Log.i("test api login", "recuperation echouée");
                             goMainAlert();
                         }
                     }
@@ -69,12 +83,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    // renvoie la page de l'activty list message
     private void goMessage() {
         Intent goMessageList = new Intent(getApplicationContext(),MessageList.class);
         startActivity(goMessageList);
         finish();
     }
-
+    // renvoie l'alerte si le login est faux
     private void goMainAlert() {
         runOnUiThread(new Runnable() {
             @Override
@@ -82,5 +97,12 @@ public class MainActivity extends AppCompatActivity {
                 alertLogin.setText("Pas bon");
             }
         });
+    }
+
+    public void setSession() {
+//        SharedPreferences prefs = getApplicationContext().getSharedPreferences("preferences-key-name", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit ();
+//        editor.putString ("id_user", 2);
+//        editor.commit ();
     }
 }
