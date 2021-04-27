@@ -30,7 +30,7 @@ public class MessageList extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
-                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("preferences-key-name", MODE_PRIVATE);
+                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("connected_user", MODE_PRIVATE);
                     Integer userid = prefs.getInt("id_user", 0);
                     String userName = prefs.getString("nom_user","toto");
                     String userSurname = prefs.getString("prenom_user","tutu");

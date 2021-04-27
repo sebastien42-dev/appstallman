@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -47,37 +48,28 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             String userLogin = login.getText().toString();
                             String userPwd = password.getText().toString();
+
                             Map<String, Object> mapJava = new HashMap<String, Object>();
                             mapJava.put("email", userLogin);
                             mapJava.put("password", userPwd);
 
                             ApiService http = new ApiService();
+
                             //mettre d'url de la machine sur la VM
                             String urlTest = "http://192.168.56.1/stallman2/public/api/login";
                             String retourJson = http.sendRequest(urlTest, "POST", mapJava);
                             System.out.println(retourJson);
 
-                            JSONObject jsonUser = new JSONObject(retourJson);
-                            String name = (String)jsonUser.get("nom");
-                            String surname = (String)jsonUser.get("prenom");
-                            Integer iduser = (Integer) jsonUser.get("id");
-
-                            SharedPreferences prefs = getApplicationContext().getSharedPreferences("preferences-key-name", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit ();
-                            editor.putInt("id_user",iduser );
-                            editor.putString("prenom_user", surname);
-                            editor.putString("nom_user", name);
-                            editor.commit ();
+                            setSession(retourJson);
 
                             goMessage();
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.i("test api login", "recuperation echouée");
+                            Log.i("test api login", "recuperation echouee");
                             goMainAlert();
                         }
                     }
-
                 });
                 thread.start();
             }
@@ -99,10 +91,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void setSession() {
-//        SharedPreferences prefs = getApplicationContext().getSharedPreferences("preferences-key-name", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = prefs.edit ();
-//        editor.putString ("id_user", 2);
-//        editor.commit ();
+    public void setSession(String JsonResponse) throws JSONException {
+        JSONObject jsonUser = new JSONObject(JsonResponse);
+
+        String name = (String)jsonUser.get("nom");
+        String surname = (String)jsonUser.get("prenom");
+        Integer iduser = (Integer) jsonUser.get("id");
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("connected_user", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit ();
+        editor.putInt("id_user",iduser );
+        editor.putString("prenom_user", surname);
+        editor.putString("nom_user", name);
+        editor.commit ();
     }
 }
