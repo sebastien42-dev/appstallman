@@ -2,13 +2,16 @@ package com.example.app_stallman;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -90,7 +93,7 @@ public class MessageList extends AppCompatActivity {
             arrayJSON = new JSONArray(retourJson);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.i("coucou", "c'est moi: ");
+            Log.i("api", "retourne rien");
         }
 
         // On va calculer la largeur des colonnes en fonction de la marge de 10
@@ -138,7 +141,7 @@ public class MessageList extends AppCompatActivity {
                 dateMessage = dateMessage.substring(0,10);
                 //Integer id = Integer.parseInt(jsonArtiste.get("id").toString());
 
-                //TEXTE COLONNE 1
+                //TEXTE COLONNE user_from
                 TextView text = createTextView(d == 10, i == 2);
                 text.setText(nameUserFrom);
                 tableRow.addView(text, i++);
@@ -146,23 +149,40 @@ public class MessageList extends AppCompatActivity {
                 text.setTextColor(Color.parseColor("#3446eb"));
                 text.setSingleLine(false);
 
-                //TEXTE COLONNE 2
+                //TEXTE COLONNE title_message
                 text = createTextView(d == 10, i == 2);
                 text.setText(titleMessaqe);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //TEXTE COLONNE 3
+                //TEXTE COLONNE date_message
                 text = createTextView(d == 10, i == 2);
                 text.setText(dateMessage);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //TEXTE COLONNE 4
-                text = createTextView(d == 10, i == 2);
-                text.setText("voir");
-                tableRow.addView(text, i++);
-                text.setGravity(Gravity.CENTER);
+                //TEXTE COLONNE voir_message
+                Button button = new Button(MessageList.this);
+                button.setText("voir");
+
+                int bottom = d==10 ? 1 : 0;
+                int right = i==2 ? 1 : 0;
+                TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 0.1f);
+                params.setMargins(1, 1, right, bottom);
+                button.setLayoutParams(params);
+                button.setPadding(4, 4, 10, 4);
+                button.setBackgroundResource(R.color.app_primary);
+                tableRow.addView(button, i++);
+                button.setGravity(Gravity.CENTER);
+
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent goMessageRead = new Intent(getApplicationContext(),Message.class);
+                        startActivity(goMessageRead);
+                        finish();
+                    }
+                });
 
             } catch (JSONException e) {
                 e.printStackTrace();

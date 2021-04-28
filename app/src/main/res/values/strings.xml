@@ -13,4 +13,7 @@
     <string name="app_title_message_list">Listes Messages</string>
     <string name="app_text_message_list">Vous pouvez consulter ici la liste de vos nouveaux messages envoyés via Stallman</string>
 
+    /* page message_list */
+    <string name="app_title_message">Message lecture</string>
+
 </resources>
