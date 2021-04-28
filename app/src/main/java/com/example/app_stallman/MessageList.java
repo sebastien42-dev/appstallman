@@ -86,7 +86,7 @@ public class MessageList extends AppCompatActivity {
         colonnes.add("De");
         colonnes.add("Titre");
         colonnes.add("Date");
-        colonnes.add("->");
+        colonnes.add(" ");
 
         JSONArray arrayJSON = new JSONArray();
         try {
@@ -134,10 +134,12 @@ public class MessageList extends AppCompatActivity {
                 String textId = jsonMessage.get("id").toString();
 
                 JSONObject userFrom = jsonMessage.getJSONObject("user_from");
-
                 String nameUserFrom = userFrom.get("nom").toString();
+                String surnameUserFrom = userFrom.get("prenom").toString();
+
                 String titleMessaqe = jsonMessage.get("title").toString();
                 String dateMessage = jsonMessage.get("date_send").toString();
+                String contentMessage = jsonMessage.get("content").toString();
                 dateMessage = dateMessage.substring(0,10);
                 //Integer id = Integer.parseInt(jsonArtiste.get("id").toString());
 
@@ -171,16 +173,27 @@ public class MessageList extends AppCompatActivity {
                 params.setMargins(1, 1, right, bottom);
                 button.setLayoutParams(params);
                 button.setPadding(4, 4, 10, 4);
-                button.setBackgroundResource(R.color.app_primary);
+                //button.setBackgroundResource(R.color.app_primary);
+                button.setTextColor(Color.parseColor("#3446eb"));
+                button.setTypeface(null,Typeface.BOLD);
                 tableRow.addView(button, i++);
                 button.setGravity(Gravity.CENTER);
+
+                //
+                SharedPreferences prefs = getApplicationContext().getSharedPreferences("message_to_read"+textId, MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit ();
+                editor.putString("message_title", titleMessaqe);
+                editor.putString("message_user_from", nameUserFrom);
+                editor.putString("message_user_from_surname", surnameUserFrom);
+                editor.putString("message_date", dateMessage);
+                editor.putString("message_content", contentMessage );
+
+                editor.commit ();
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent goMessageRead = new Intent(getApplicationContext(),Message.class);
-                        startActivity(goMessageRead);
-                        finish();
+                        goMessageRead(textId);
                     }
                 });
 
@@ -200,5 +213,16 @@ public class MessageList extends AppCompatActivity {
         text.setPadding(4, 4, 10, 4);
         text.setBackgroundColor(this.getColor(R.color.white));
         return text;
+    }
+
+    private void goMessageRead(String textId) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_to_read", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit ();
+        editor.putString("id_message", textId);
+        editor.commit ();
+
+        Intent goMessageRead = new Intent(getApplicationContext(),Message.class);
+        startActivity(goMessageRead);
+        finish();
     }
 }

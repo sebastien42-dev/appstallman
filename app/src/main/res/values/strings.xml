@@ -15,5 +15,7 @@
 
     /* page message_list */
     <string name="app_title_message">Message lecture</string>
+    <string name="app_text_message_list_button">Retour à la liste</string>
+    <string name="app_text_response_button">Repondre</string>
 
 </resources>
