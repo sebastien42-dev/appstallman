@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                alertLogin.setText("Pas bon");
+                alertLogin.setText("Erreur de login ou mot de passe");
             }
         });
     }
