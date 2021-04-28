@@ -80,9 +80,10 @@ public class MessageList extends AppCompatActivity {
         // Recuperation du table layout sur lequel nous allons agir
         // Chacune des entrées de cette liste est l'entête de la colonne
         List<String> colonnes = new ArrayList<String>();
-        colonnes.add("Message de");
+        colonnes.add("De");
         colonnes.add("Titre");
-        colonnes.add("Voir");
+        colonnes.add("Date");
+        colonnes.add("->");
 
         JSONArray arrayJSON = new JSONArray();
         try {
@@ -132,7 +133,9 @@ public class MessageList extends AppCompatActivity {
                 JSONObject userFrom = jsonMessage.getJSONObject("user_from");
 
                 String nameUserFrom = userFrom.get("nom").toString();
-                String textName = jsonMessage.get("title").toString();
+                String titleMessaqe = jsonMessage.get("title").toString();
+                String dateMessage = jsonMessage.get("date_send").toString();
+                dateMessage = dateMessage.substring(0,10);
                 //Integer id = Integer.parseInt(jsonArtiste.get("id").toString());
 
                 //TEXTE COLONNE 1
@@ -145,11 +148,17 @@ public class MessageList extends AppCompatActivity {
 
                 //TEXTE COLONNE 2
                 text = createTextView(d == 10, i == 2);
-                text.setText(textName);
+                text.setText(titleMessaqe);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //TEXTE COLONNE 2
+                //TEXTE COLONNE 3
+                text = createTextView(d == 10, i == 2);
+                text.setText(dateMessage);
+                tableRow.addView(text, i++);
+                text.setGravity(Gravity.CENTER);
+
+                //TEXTE COLONNE 4
                 text = createTextView(d == 10, i == 2);
                 text.setText("voir");
                 tableRow.addView(text, i++);
