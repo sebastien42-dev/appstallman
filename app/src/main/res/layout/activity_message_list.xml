@@ -29,13 +29,25 @@
             android:id="@+id/textMessageList"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/app_text_message_list"
+            android:text=""
             android:textAlignment="center"
             android:textColor="@color/app_primary"
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TableLayout
+            android:id="@+id/containerTable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="229dp"
+            tools:layout_editor_absoluteY="209dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </TableLayout>
 
         <ListView
             android:id="@+id/listMessage"
