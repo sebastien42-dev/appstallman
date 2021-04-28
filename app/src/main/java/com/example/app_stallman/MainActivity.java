@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                             //mettre d'url de la machine sur la VM
                             String urlTest = "http://192.168.56.1/stallman2/public/api/login";
                             String retourJson = http.sendRequest(urlTest, "POST", mapJava);
-                            System.out.println(retourJson);
+                            //System.out.println(retourJson);
 
                             setSession(retourJson);
 

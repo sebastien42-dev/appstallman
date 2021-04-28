@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class Message extends AppCompatActivity {
@@ -40,6 +41,13 @@ public class Message extends AppCompatActivity {
             }
         });
 
+        buttonResponse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goMessageEdit();
+            }
+        });
+
 
         SharedPreferences id = getApplicationContext().getSharedPreferences("id_to_read", MODE_PRIVATE);
         String idToRead = id.getString("id_message","0");
@@ -47,9 +55,13 @@ public class Message extends AppCompatActivity {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("message_to_read"+idToRead, MODE_PRIVATE);
         String userFrom = prefs.getString("message_user_from","toto");
         String userFromSurname = prefs.getString("message_user_from_surname","titi");
+        Integer userFromid = prefs.getInt("message_user_from_id",2);
+
         String content = prefs.getString("message_content","tutu");
         String title = prefs.getString("message_title","tata");
         String date = prefs.getString("message_date","0000-00-00");
+
+        setSessionForEdit(userFrom,userFromSurname,userFromid,title);
 
         contentMessage.setText(content);
         titleMessage.setText(title);
@@ -62,5 +74,24 @@ public class Message extends AppCompatActivity {
         Intent goMessageList = new Intent(getApplicationContext(),MessageList.class);
         startActivity(goMessageList);
         finish();
+    }
+
+    public void goMessageEdit() {
+        Intent goMessageEdit = new Intent(getApplicationContext(), EditMessage.class);
+        startActivity(goMessageEdit);
+        finish();
+    }
+
+    public void setSessionForEdit(String name,String surname,Integer idUserFrom,String titleMessage) {
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("response_message", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit ();
+
+        editor.putInt("id_user",idUserFrom );
+        editor.putString("prenom_user", surname);
+        editor.putString("nom_user", name);
+        editor.putString("title_message", titleMessage);
+
+        editor.commit ();
     }
 }

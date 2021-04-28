@@ -1,11 +1,14 @@
 package com.example.app_stallman;
 
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -41,7 +44,12 @@ public class ApiService {
         } else {
             urlParameters = "{";
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                urlParameters += '"'+entry.getKey()+'"'+":"+'"'+entry.getValue()+'"';
+                if(entry.getValue() instanceof Integer ) {
+                    urlParameters += '"'+entry.getKey()+'"'+":"+entry.getValue();
+                } else {
+                    urlParameters += '"'+entry.getKey()+'"'+":"+'"'+entry.getValue()+'"';
+                }
+
                 if (i < parameters.size()) {
                     urlParameters += ",";
                 } else {
@@ -55,7 +63,7 @@ public class ApiService {
         // Send request
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        System.out.println(urlParameters);
+        //System.out.println(urlParameters);
         wr.writeBytes(urlParameters);
         wr.flush();
         wr.close();

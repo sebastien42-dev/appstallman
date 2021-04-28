@@ -136,6 +136,7 @@ public class MessageList extends AppCompatActivity {
                 JSONObject userFrom = jsonMessage.getJSONObject("user_from");
                 String nameUserFrom = userFrom.get("nom").toString();
                 String surnameUserFrom = userFrom.get("prenom").toString();
+                Integer idUserFrom = (Integer) userFrom.get("id");
 
                 String titleMessaqe = jsonMessage.get("title").toString();
                 String dateMessage = jsonMessage.get("date_send").toString();
@@ -185,6 +186,7 @@ public class MessageList extends AppCompatActivity {
                 editor.putString("message_title", titleMessaqe);
                 editor.putString("message_user_from", nameUserFrom);
                 editor.putString("message_user_from_surname", surnameUserFrom);
+                editor.putInt("message_user_from_id", idUserFrom);
                 editor.putString("message_date", dateMessage);
                 editor.putString("message_content", contentMessage );
 
