@@ -5,6 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MessageList">
+    <ScrollView
+        android:id="@+id/scrollViewMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
@@ -56,6 +60,6 @@
             android:divider="@color/material_blue_grey_800"
             android:dividerHeight="1dp" />
     </LinearLayout>
-
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
