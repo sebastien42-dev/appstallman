@@ -26,4 +26,13 @@
     <string name="app_edit_text_title">Titre</string>
     <string name="app_edit_text_content">Contenu</string>
 
+    /* page edit_message */
+    <string name="app_text_bill_text_name">Libelle du hors forfait</string>
+    <string name="app_text_bill_list_button">Retour à la liste des factures</string>
+    <string name="app_text_bill_text_value">Valeur</string>
+
+    /* page edit_bill*/
+    <string name="app_bill_lign_add_button">Ajouter une ligne hors forfait</string>
+    <string name="app_bill_lign_send">Ajouter</string>
+
 </resources>

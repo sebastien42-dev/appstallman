@@ -27,11 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 public class BillLigns extends AppCompatActivity {
-
+    private Button addLign;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_ligns);
+
+        this.addLign = (Button) findViewById(R.id.addLign);
 
         SharedPreferences id = getApplicationContext().getSharedPreferences("id_bill_to_display", MODE_PRIVATE);
         String idBill = id.getString("id_bill","0");
@@ -61,6 +63,13 @@ public class BillLigns extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        addLign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goEditMessage();
+            }
+        });
     }
 
     private void createTableLayout(String retourJson) {
@@ -139,6 +148,12 @@ public class BillLigns extends AppCompatActivity {
                     nameOutPackage = outPackageLign.get("out_package_name").toString();
                     valueOutPackage = outPackageLign.get("value").toString();
                 }
+
+                //je recupere la facture
+                JSONObject bill = jsonBillLigns.getJSONObject("bill");
+                String idBill = bill.get("id").toString();
+                String numBill = bill.get("bill_provider_num").toString();
+                setSessionBillForEdit(idBill,numBill);
 
                 //date des lignes
                 TextView text = createTextView(d == 10, i == 2);
@@ -219,6 +234,12 @@ public class BillLigns extends AppCompatActivity {
         finish();
     }
 
+    public void goEditMessage() {
+        Intent goEditbill = new Intent(getApplicationContext(),EditBillLign.class);
+        startActivity(goEditbill);
+        finish();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_bill_lign, menu);
@@ -241,4 +262,16 @@ public class BillLigns extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public void setSessionBillForEdit(String idBill,String numBill) {
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_bill_to_response", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit ();
+
+        editor.putString("num_bill", numBill);
+        editor.putString("id_bill", idBill);
+
+        editor.commit ();
+    }
+
 }
