@@ -26,35 +26,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class bill extends AppCompatActivity {
-    private TextView openTextBill;
+public class BillLigns extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bill);
+        setContentView(R.layout.activity_bill_ligns);
 
-        this.openTextBill = (TextView) findViewById(R.id.openTextBill);
+        SharedPreferences id = getApplicationContext().getSharedPreferences("id_bill_to_display", MODE_PRIVATE);
+        String idBill = id.getString("id_bill","0");
 
         final String[] retourJson = new String[1];
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
-                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("connected_user", MODE_PRIVATE);
-
-                    Integer userid = prefs.getInt("id_user", 0);
-                    String userName = prefs.getString("nom_user","toto");
-                    String userSurname = prefs.getString("prenom_user","tutu");
-
-                    TextView textOpen = new TextView(bill.this,null);
-                    textOpen.findViewById(R.id.openTextBill);
-                    openTextBill.setText("de " + userName + " " + userSurname);
 
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     ApiService http = new ApiService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = "http://192.168.56.1/bddstall/public/api/bill/list/"+userid.toString();
+                    String urlTest = "http://192.168.56.1/bddstall/public/api/billlign/list/"+idBill.toString();
                     retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
-                    //System.out.println(retourJson);
+                    //System.out.println(retourJson[0]);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -71,17 +63,17 @@ public class bill extends AppCompatActivity {
         }
     }
 
-
     private void createTableLayout(String retourJson) {
 
-        TableLayout containerTable = (TableLayout) findViewById(R.id.tableBill);
+        TableLayout containerTable = (TableLayout) findViewById(R.id.tableBillLign);
         //entete du tableau des factures
         List<String> colonnes = new ArrayList<String>();
-        colonnes.add("Numéro");
         colonnes.add("Date");
-        colonnes.add("Montant");
-        colonnes.add("Etat");
-        colonnes.add("");
+        colonnes.add("Quantité");
+        colonnes.add("Forfait / Hors forfait");
+        colonnes.add("Montant unitaire");
+        colonnes.add("Montant total");
+
 
         JSONArray arrayJSON = new JSONArray();
 
@@ -92,7 +84,7 @@ public class bill extends AppCompatActivity {
             Log.i("api", "retourne rien");
         }
 
-        TableRow tableRow = new TableRow(bill.this);
+        TableRow tableRow = new TableRow(BillLigns.this);
         containerTable.addView(tableRow,
                 new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         tableRow.setLayoutParams(new TableRow.LayoutParams(colonnes.size()));
@@ -114,96 +106,83 @@ public class bill extends AppCompatActivity {
         for (int d = 0; d < arrayJSON.length(); d++) {
             //ON RECUPERE L'OBJET JSON DE CHAQUE LIGNE
             try {
-                JSONObject jsonBill = arrayJSON.getJSONObject(d);
+                JSONObject jsonBillLigns = arrayJSON.getJSONObject(d);
 
-                tableRow = new TableRow(bill.this);
+                tableRow = new TableRow(BillLigns.this);
                 containerTable.addView(tableRow,
                         new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                 i = 0;
-                String billId = jsonBill.get("id").toString();
+                String quantityLign = "";
+                String namePackage = "";
+                String valuePackage = "";
+                String nameOutPackage = "";
+                String valueOutPackage = "";
 
-                //je récuperer le user des factures
-                JSONObject userBill = jsonBill.getJSONObject("user");
-                String nameUserBill = userBill.get("nom").toString();
-                String surnameUserBill = userBill.get("prenom").toString();
-                Integer idUserBill = (Integer) userBill.get("id");
+                //je récuperer les données de la lignes
+                if(jsonBillLigns.has("package")) {
+                    quantityLign = jsonBillLigns.get("quantity").toString();
+                }
+                String dateLign = jsonBillLigns.get("created_at").toString();
+                String globalValueLign = jsonBillLigns.get("global_lign_value").toString();
+                dateLign = dateLign.substring(0,10);
 
-                String stateColor = "#000000";
-                //je recupere l etat de la facture
-                JSONObject billState = jsonBill.getJSONObject("bill_state");
-                String billStateName = billState.get("state_name").toString();
-                switch (billStateName) {
-                    case "Créée":
-                        stateColor = "#fc0303";
-                        break;
-                    case "En attente":
-                        stateColor = "#fca103";
-                        break;
-                    case "Validée":
-                        stateColor = "#034efc";
-                        break;
-                    case "Payée":
-                        stateColor = "#17e300";
-                        break;
-                    default:
-                        stateColor = "#000000";
+                //je récupère les données des packages
+                if(jsonBillLigns.has("package")) {
+                    JSONObject packageLign = jsonBillLigns.getJSONObject("package");
+                    namePackage = packageLign.get("package_name").toString();
+                    valuePackage = packageLign.get("value").toString();
+                }
+                //je récupère les données des out_packages
+                if(jsonBillLigns.has("out_package")) {
+                    JSONObject outPackageLign = jsonBillLigns.getJSONObject("out_package");
+                    nameOutPackage = outPackageLign.get("out_package_name").toString();
+                    valueOutPackage = outPackageLign.get("value").toString();
                 }
 
-                String numBill = jsonBill.get("bill_provider_num").toString();
-                String dateBill = jsonBill.get("created_at").toString();
-                String valueBill = jsonBill.get("global_bill_value").toString();
-                dateBill = dateBill.substring(0,10);
-
-                //NUM de la facture
+                //date des lignes
                 TextView text = createTextView(d == 10, i == 2);
-                text.setText(numBill);
+                text.setText(dateLign);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.LEFT);
                 text.setTextColor(Color.parseColor("#3446eb"));
-                //text.setSingleLine(false);
 
-                //DATE de la facture
+                //quantité de la ligne
                 text = createTextView(d == 10, i == 2);
-                text.setText(dateBill);
+                text.setText(quantityLign);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //MONTANT de la facture
+                //nom du forfait ou hors forfait
                 text = createTextView(d == 10, i == 2);
-                text.setText(valueBill);
+                if(namePackage != "") {
+                    text.setText(namePackage);
+                    text.setTextColor(Color.parseColor("#00c20a"));
+                } else {
+                    text.setText(nameOutPackage);
+                    text.setTextColor(Color.parseColor("#ff4d00"));
+                }
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //ETAT de la facture
+                //montant unitaire
                 text = createTextView(d == 10, i == 2);
-                text.setText(billStateName);
-                text.setTextColor(Color.parseColor(stateColor));
+                if(valuePackage != "") {
+                    text.setText(valuePackage);
+                    text.setTextColor(Color.parseColor("#00c20a"));
+                } else {
+                    text.setText(valueOutPackage);
+                    text.setTextColor(Color.parseColor("#ff4d00"));
+                }
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //BUTTON pour voir les lignes
-                Button button = new Button(bill.this);
-                button.setText("voir");
+                //montant total
+                text = createTextView(d == 10, i == 2);
+                text.setText(globalValueLign);
+                tableRow.addView(text, i++);
+                text.setGravity(Gravity.CENTER);
 
-                int bottom = d==10 ? 1 : 0;
-                int right = i==2 ? 1 : 0;
-                TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 0.1f);
-                params.setMargins(1, 1, right, bottom);
-                button.setLayoutParams(params);
-                button.setPadding(4, 4, 10, 4);
-
-                button.setTextColor(Color.parseColor("#3446eb"));
-                button.setTypeface(null,Typeface.BOLD);
-                tableRow.addView(button, i++);
-                button.setGravity(Gravity.CENTER);
-
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        goBillSelected(billId);
-                    }
-                });
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -222,11 +201,15 @@ public class bill extends AppCompatActivity {
         text.setBackgroundColor(this.getColor(R.color.white));
         return text;
     }
-
-
     private void goMessage() {
         Intent goMessageList = new Intent(getApplicationContext(),MessageList.class);
         startActivity(goMessageList);
+        finish();
+    }
+
+    private void goBill() {
+        Intent goBill = new Intent(getApplicationContext(),bill.class);
+        startActivity(goBill);
         finish();
     }
 
@@ -238,31 +221,24 @@ public class bill extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_bill, menu);
+        getMenuInflater().inflate(R.menu.menu_bill_lign, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menuBillGoMessage:
+            case R.id.menuBillLignGoMessage:
                 goMessage();
                 return true;
-            case R.id.menuBillGoDsh:
+            case R.id.menuBillLignGoDashboard:
                 goDashboard();
+                return true;
+            case R.id.menuBillLignGoBill:
+                goBill();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-    private void goBillSelected(String billId) {
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_bill_to_display", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit ();
-        editor.putString("id_bill", billId);
-        editor.commit ();
-
-        Intent goBillLigns = new Intent(getApplicationContext(),BillLigns.class);
-        startActivity(goBillLigns);
-        finish();
     }
 }

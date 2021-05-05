@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App_stallman">
-        <activity android:name=".bill"></activity>
+        <activity android:name=".BillLigns"></activity>
+        <activity android:name=".bill" />
         <activity android:name=".Dashboard" />
         <activity android:name=".EditMessage" />
 
