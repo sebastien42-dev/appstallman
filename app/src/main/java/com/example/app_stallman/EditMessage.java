@@ -77,7 +77,7 @@ public class EditMessage extends AppCompatActivity {
                             ApiService http = new ApiService();
 
                             //mettre d'url de la machine sur la VM
-                            String urlTest = "http://192.168.56.1/stallman2/public/api/message/new";
+                            String urlTest = "http://192.168.56.1/bddstall/public/api/message/new";
                             String retourJson = http.sendRequest(urlTest, "PUT", mapJava);
                             //System.out.println(retourJson);
 

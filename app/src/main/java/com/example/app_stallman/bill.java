@@ -12,9 +12,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -23,24 +21,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MessageList extends AppCompatActivity {
-    ListView simpleList;
-    private TextView openText;
+public class bill extends AppCompatActivity {
+    private TextView openTextBill;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message_list);
+        setContentView(R.layout.activity_bill);
 
-        this.openText = (TextView) findViewById(R.id.textMessageList);
+        this.openTextBill = (TextView) findViewById(R.id.openTextBill);
 
         final String[] retourJson = new String[1];
         Thread thread = new Thread(new Runnable() {
@@ -52,14 +45,14 @@ public class MessageList extends AppCompatActivity {
                     String userName = prefs.getString("nom_user","toto");
                     String userSurname = prefs.getString("prenom_user","tutu");
 
-                    TextView textOpen = new TextView(MessageList.this,null);
-                    textOpen.findViewById(R.id.textMessageList);
-                    openText.setText("Bonjour " + userName + " " + userSurname);
+                    TextView textOpen = new TextView(bill.this,null);
+                    textOpen.findViewById(R.id.openTextBill);
+                    openTextBill.setText("de " + userName + " " + userSurname);
 
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     ApiService http = new ApiService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = "http://192.168.56.1/bddstall/public/api/message/list/"+userid.toString();
+                    String urlTest = "http://192.168.56.1/bddstall/public/api/bill/list/"+userid.toString();
                     retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
                     //System.out.println(retourJson);
 
@@ -76,19 +69,19 @@ public class MessageList extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void createTableLayout(String retourJson) {
-        TableLayout containerTable = (TableLayout) findViewById(R.id.containerTable);
 
-        // Recuperation du table layout sur lequel nous allons agir
-        // Chacune des entrées de cette liste est l'entête de la colonne
+    private void createTableLayout(String retourJson) {
+
+        TableLayout containerTable = (TableLayout) findViewById(R.id.tableBill);
+        //entete du tableau des factures
         List<String> colonnes = new ArrayList<String>();
-        colonnes.add("De");
-        colonnes.add("Titre");
+        colonnes.add("Numéro");
         colonnes.add("Date");
-        colonnes.add(" ");
+        colonnes.add("Montant");
+        colonnes.add("Etat");
+        colonnes.add("");
 
         JSONArray arrayJSON = new JSONArray();
         try {
@@ -98,18 +91,13 @@ public class MessageList extends AppCompatActivity {
             Log.i("api", "retourne rien");
         }
 
-        // On va calculer la largeur des colonnes en fonction de la marge de 10
-        // On affiche l'enreg dans une ligne
-        TableRow tableRow = new TableRow(MessageList.this);
+        TableRow tableRow = new TableRow(bill.this);
         containerTable.addView(tableRow,
                 new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        // On crée une ligne de x players colonnes
         tableRow.setLayoutParams(new TableRow.LayoutParams(colonnes.size()));
 
-        // On va commencer par renseigner une ligne de titre par joueur
-
         //DEFINITION DES COLONNES DU TABLEAU
+        //ligne entete
         int i = 0;
         for (String texteColonne : colonnes) {
             TextView text = createTextView(false, i == colonnes.size() - 1);
@@ -121,53 +109,80 @@ public class MessageList extends AppCompatActivity {
             tableRow.addView(text, i++);
         }
 
+        //contenu
         for (int d = 0; d < arrayJSON.length(); d++) {
             //ON RECUPERE L'OBJET JSON DE CHAQUE LIGNE
             try {
-                JSONObject jsonMessage = arrayJSON.getJSONObject(d);
+                JSONObject jsonBill = arrayJSON.getJSONObject(d);
 
-                tableRow = new TableRow(MessageList.this);
+                tableRow = new TableRow(bill.this);
                 containerTable.addView(tableRow,
                         new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-                //i sert a definir si on est en fin de ligne ou pas
                 i = 0;
+                String textId = jsonBill.get("id").toString();
 
-                String textId = jsonMessage.get("id").toString();
+                //je récuperer le user des factures
+                JSONObject userBill = jsonBill.getJSONObject("user");
+                String nameUserBill = userBill.get("nom").toString();
+                String surnameUserBill = userBill.get("prenom").toString();
+                Integer idUserBill = (Integer) userBill.get("id");
 
-                JSONObject userFrom = jsonMessage.getJSONObject("user_from");
-                String nameUserFrom = userFrom.get("nom").toString();
-                String surnameUserFrom = userFrom.get("prenom").toString();
-                Integer idUserFrom = (Integer) userFrom.get("id");
+                String stateColor = "#000000";
+                //je recupere l etat de la facture
+                JSONObject billState = jsonBill.getJSONObject("bill_state");
+                String billStateName = billState.get("state_name").toString();
+                switch (billStateName) {
+                    case "Créée":
+                        stateColor = "#fc0303";
+                        break;
+                    case "En attente":
+                        stateColor = "#fca103";
+                        break;
+                    case "Validée":
+                        stateColor = "#034efc";
+                        break;
+                    case "Payée":
+                        stateColor = "#17e300";
+                        break;
+                    default:
+                        stateColor = "#000000";
+                }
 
-                String titleMessaqe = jsonMessage.get("title").toString();
-                String dateMessage = jsonMessage.get("date_send").toString();
-                String contentMessage = jsonMessage.get("content").toString();
-                dateMessage = dateMessage.substring(0,10);
-                //Integer id = Integer.parseInt(jsonArtiste.get("id").toString());
+                String numBill = jsonBill.get("bill_provider_num").toString();
+                String dateBill = jsonBill.get("created_at").toString();
+                String valueBill = jsonBill.get("global_bill_value").toString();
+                dateBill = dateBill.substring(0,10);
 
-                //TEXTE COLONNE user_from
+                //NUM de la facture
                 TextView text = createTextView(d == 10, i == 2);
-                text.setText(nameUserFrom);
+                text.setText(numBill);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.LEFT);
                 text.setTextColor(Color.parseColor("#3446eb"));
-                text.setSingleLine(false);
+                //text.setSingleLine(false);
 
-                //TEXTE COLONNE title_message
+                //DATE de la facture
                 text = createTextView(d == 10, i == 2);
-                text.setText(titleMessaqe);
+                text.setText(dateBill);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //TEXTE COLONNE date_message
+                //MONTANT de la facture
                 text = createTextView(d == 10, i == 2);
-                text.setText(dateMessage);
+                text.setText(valueBill);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //TEXTE COLONNE voir_message
-                Button button = new Button(MessageList.this);
+                //ETAT de la facture
+                text = createTextView(d == 10, i == 2);
+                text.setText(billStateName);
+                text.setTextColor(Color.parseColor(stateColor));
+                tableRow.addView(text, i++);
+                text.setGravity(Gravity.CENTER);
+
+                //BUTTON pour voir les lignes
+                Button button = new Button(bill.this);
                 button.setText("voir");
 
                 int bottom = d==10 ? 1 : 0;
@@ -176,30 +191,30 @@ public class MessageList extends AppCompatActivity {
                 params.setMargins(1, 1, right, bottom);
                 button.setLayoutParams(params);
                 button.setPadding(4, 4, 10, 4);
-                //button.setBackgroundResource(R.color.app_primary);
+
                 button.setTextColor(Color.parseColor("#3446eb"));
                 button.setTypeface(null,Typeface.BOLD);
                 tableRow.addView(button, i++);
                 button.setGravity(Gravity.CENTER);
 
                 //
-                SharedPreferences prefs = getApplicationContext().getSharedPreferences("message_to_read"+textId, MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit ();
-                editor.putString("message_title", titleMessaqe);
-                editor.putString("message_user_from", nameUserFrom);
-                editor.putString("message_user_from_surname", surnameUserFrom);
-                editor.putInt("message_user_from_id", idUserFrom);
-                editor.putString("message_date", dateMessage);
-                editor.putString("message_content", contentMessage );
+//                SharedPreferences prefs = getApplicationContext().getSharedPreferences("message_to_read"+textId, MODE_PRIVATE);
+//                SharedPreferences.Editor editor = prefs.edit ();
+//                editor.putString("message_title", titleMessaqe);
+//                editor.putString("message_user_from", nameUserFrom);
+//                editor.putString("message_user_from_surname", surnameUserFrom);
+//                editor.putInt("message_user_from_id", idUserFrom);
+//                editor.putString("message_date", dateMessage);
+//                editor.putString("message_content", contentMessage );
+//
+//                editor.commit ();
 
-                editor.commit ();
-
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        goMessageRead(textId);
-                    }
-                });
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        goMessageRead(textId);
+//                    }
+//                });
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -219,14 +234,12 @@ public class MessageList extends AppCompatActivity {
         return text;
     }
 
-    private void goMessageRead(String textId) {
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_to_read", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit ();
-        editor.putString("id_message", textId);
-        editor.commit ();
 
-        Intent goMessageRead = new Intent(getApplicationContext(),Message.class);
-        startActivity(goMessageRead);
+
+
+    private void goMessage() {
+        Intent goMessageList = new Intent(getApplicationContext(),MessageList.class);
+        startActivity(goMessageList);
         finish();
     }
 
@@ -236,25 +249,19 @@ public class MessageList extends AppCompatActivity {
         finish();
     }
 
-    private void goBill() {
-        Intent goBill = new Intent(getApplicationContext(),bill.class);
-        startActivity(goBill);
-        finish();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_message_list, menu);
+        getMenuInflater().inflate(R.menu.menu_bill, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menuMessageGoBill:
-                goBill();
+            case R.id.menuBillGoMessage:
+                goMessage();
                 return true;
-            case R.id.menuMessageGoDsh:
+            case R.id.menuBillGoDsh:
                 goDashboard();
                 return true;
             default:

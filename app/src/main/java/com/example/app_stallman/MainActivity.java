@@ -56,13 +56,13 @@ public class MainActivity extends AppCompatActivity {
                             ApiService http = new ApiService();
 
                             //mettre d'url de la machine sur la VM
-                            String urlTest = "http://192.168.56.1/stallman2/public/api/login";
+                            String urlTest = "http://192.168.56.1/bddstall/public/api/login";
                             String retourJson = http.sendRequest(urlTest, "POST", mapJava);
                             //System.out.println(retourJson);
 
                             setSession(retourJson);
-
-                            goMessage();
+                            goDashboard();
+                            //goMessage();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -79,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
     private void goMessage() {
         Intent goMessageList = new Intent(getApplicationContext(),MessageList.class);
         startActivity(goMessageList);
+        finish();
+    }
+
+    private void goDashboard() {
+        Intent goDashboard = new Intent(getApplicationContext(),Dashboard.class);
+        startActivity(goDashboard);
         finish();
     }
     // renvoie l'alerte si le login est faux
