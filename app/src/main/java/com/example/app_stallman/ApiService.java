@@ -18,6 +18,8 @@ public class ApiService {
 
     private String dataSend="";
 
+    public static String urlApi = "http://192.168.56.1/bddstall/public/api/";
+
     // HTTP request
     public String sendRequest(String url, String method, Map<String, Object> parameters) throws Exception {
 

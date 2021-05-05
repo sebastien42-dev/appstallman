@@ -44,7 +44,7 @@ public class BillLigns extends AppCompatActivity {
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     ApiService http = new ApiService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = "http://192.168.56.1/bddstall/public/api/billlign/list/"+idBill.toString();
+                    String urlTest = http.urlApi+"billlign/list/"+idBill.toString();
                     retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
                     //System.out.println(retourJson[0]);
 

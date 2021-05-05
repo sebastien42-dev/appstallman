@@ -59,7 +59,7 @@ public class MessageList extends AppCompatActivity {
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     ApiService http = new ApiService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = "http://192.168.56.1/bddstall/public/api/message/list/"+userid.toString();
+                    String urlTest = http.urlApi+"message/list/"+userid.toString();
                     retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
                     //System.out.println(retourJson);
 

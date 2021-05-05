@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                             ApiService http = new ApiService();
 
                             //mettre d'url de la machine sur la VM
-                            String urlTest = "http://192.168.56.1/bddstall/public/api/login";
+                            String urlTest = http.urlApi+"login";
                             String retourJson = http.sendRequest(urlTest, "POST", mapJava);
                             //System.out.println(retourJson);
 

@@ -52,7 +52,7 @@ public class bill extends AppCompatActivity {
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     ApiService http = new ApiService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = "http://192.168.56.1/bddstall/public/api/bill/list/"+userid.toString();
+                    String urlTest = http.urlApi+"bill/list/"+userid.toString();
                     retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
                     //System.out.println(retourJson);
 
