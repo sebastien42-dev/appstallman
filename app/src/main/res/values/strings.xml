@@ -5,6 +5,10 @@
     <string name="app_title_login">Stallman</string>
     <string name="app_text_login">Veuillez Saisir vos identifiants et mots de passe svp !</string>
 
+    /* page dsh */
+    <string name="app_dsh_button_message">Mes messages</string>
+    <string name="app_dsh_button_bill">Mes factures</string>
+
     <string name="app_id_login">Identifiant</string>
     <string name="app_mdp_login">Mot de passe</string>
     <string name="app_button_login">Se connecter</string>
