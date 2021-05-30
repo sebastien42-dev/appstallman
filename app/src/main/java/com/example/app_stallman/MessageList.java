@@ -141,9 +141,15 @@ public class MessageList extends AppCompatActivity {
                 Integer idUserFrom = (Integer) userFrom.get("id");
 
                 String titleMessaqe = jsonMessage.get("title").toString();
-                String dateMessage = jsonMessage.get("date_send").toString();
                 String contentMessage = jsonMessage.get("content").toString();
+                String dateMessage = jsonMessage.get("date_send").toString();
+
                 dateMessage = dateMessage.substring(0,10);
+                String dateMessageAnnee = dateMessage.substring(0,4);
+                String dateMessageMois = dateMessage.substring(5,7);
+                String dateMessageJour = dateMessage.substring(8,10);
+                dateMessage = dateMessageJour + "/" + dateMessageMois + "/" + dateMessageAnnee ;
+
                 //Integer id = Integer.parseInt(jsonArtiste.get("id").toString());
 
                 //TEXTE COLONNE user_from

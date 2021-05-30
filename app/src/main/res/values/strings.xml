@@ -21,6 +21,7 @@
     <string name="app_title_message">Message lecture</string>
     <string name="app_text_message_list_button">Retour à la liste</string>
     <string name="app_text_response_button">Repondre</string>
+    <string name="app_text_archived_button">Archiver</string>
 
     /* page edit_message */
     <string name="app_edit_text_title">Titre</string>

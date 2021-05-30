@@ -18,10 +18,10 @@
         <activity android:name=".Dashboard" />
         <activity android:name=".EditMessage" />
 
-        <service
-            android:name=".ApiService"
-            android:enabled="true"
-            android:exported="true" />
+<!--        <service-->
+<!--            android:name=".ApiService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true" />-->
 
         <activity android:name=".Message" />
         <activity android:name=".MessageList" />
